@@ -33,6 +33,15 @@ injured_people = st.slider("Number of persons injured in vehicle collisions", 0,
 st.map(data.query("injured_persons >= @injured_people")[["latitude", "longitude"]].dropna(how="any"))
 
 st.header("How many collisions occur during a given time of day?")
+@st.cache(persist=True)
+def load_data():
+    data = pd.read_csv('dataset.csv')
+    data.dropna(inplace=True)
+    return data
+
+df = load_data()
+count_missing_vals = df.isnull().sum()
+df = load_data()
 hour = st.slider("Hour to look at", 0, 23)
 original_data = data
 data = data[data[DATE_TIME].dt.hour == hour]
