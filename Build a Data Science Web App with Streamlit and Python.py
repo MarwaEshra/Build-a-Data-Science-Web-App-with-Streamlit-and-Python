@@ -6,7 +6,7 @@ import plotly.express as px
 
 DATE_TIME = "date/time"
 DATA_URL = (
-    "/path/to/Motor_Vehicle_Collisions_-_Crashes.csv"
+    "Motor_Vehicle_Collisions_-_Crashes.csv"
 )
 
 st.title("Motor Vehicle Collisions in New York City")
@@ -76,13 +76,21 @@ fig = px.bar(chart_data, x='minute', y='crashes', hover_data=['minute', 'crashes
 st.write(fig)
 
 st.header("Top 5 dangerous streets by affected class")
+
+selectbox_dict = {
+    'Pedestrians': 'injured_pedestrians',
+    'Cyclists': 'injured_cyclists',
+    'Motorists': 'injured_motorists'
+}
+
 select = st.selectbox('Affected class', ['Pedestrians', 'Cyclists', 'Motorists'])
 
-if select == 'Pedestrians':
-    st.write(original_data.query("injured_pedestrians >= 1")[["on_street_name", "injured_pedestrians"]].sort_values(by=['injured_pedestrians'], ascending=False).dropna(how="any")[:5])
-
-elif select == 'Cyclists':
-    st.write(original_data.query("injured_cyclists >= 1")[["on_street_name", "injured_cyclists"]].sort_values(by=['injured_cyclists'], ascending=False).dropna(how="any")[:5])
-
-else:
-    st.write(original_data.query("injured_motorists >= 1")[["on_street_name", "injured_motorists"]].sort_values(by=['injured_motorists'], ascending=False).dropna(how="any")[:5])
+print(selectbox_dict[select])
+injured_type = selectbox_dict[select]
+st.write(
+    original_data.query(f"{injured_type} >=1")[
+        ["on_street_name", injured_type]
+        ]
+        .sort_values(by=[injured_type], ascending=False)
+        .dropna(how="any")[:5]
+)
